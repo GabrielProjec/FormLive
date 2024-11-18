@@ -40,7 +40,6 @@ function FormOne() {
             alert('Todos os campos são obrigatórios!');
             return;
         }
-
         try {
             const response = await fetch('http://localhost:5000/produtos/', {
                 method: 'POST',
@@ -90,7 +89,10 @@ function FormOne() {
         setDescricao(produto.descricao);
         setPreco(produto.preco);
         setProdutoId(produto.id);
-    };
+    }
+
+
+    
 
     const deletarProduto = async (id: number) => {
         const confirmar = window.confirm('Tem certeza que deseja excluir este produto?');
