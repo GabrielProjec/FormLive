@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import api from '../../config/api';
 import './styles.css'
 
 interface Produto {
@@ -21,14 +22,9 @@ function FormTwo() {
 
     const listaProdutos = async () => {
         try {
-            const response = await fetch('http://localhost:5000/produtos', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const response = await api.get('/produtos', {
             });
-            const data = await response.json();
-            setProdutos(data);
+            setProdutos(response.data);
         } catch (error) {
             console.log('Erro ao buscar os dados', error);
         }
@@ -41,15 +37,10 @@ function FormTwo() {
             return;
         }
         try {
-            const response = await fetch('http://localhost:5000/produtos/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nome, descricao, preco }),
+            const response = await api.post('/produtos/', {
+                nome, descricao, preco
             });
-            const novoProduto = await response.json();
-            setProdutos((prevProdutos) => [...prevProdutos, novoProduto]);
+            setProdutos((prevProdutos) => [...prevProdutos, response.data]);
             setNome('');
             setDescricao('');
             setPreco('');
@@ -61,14 +52,12 @@ function FormTwo() {
     const atualizarProduto = async (event: any) => {
         event.preventDefault();
         try {
-            const response = await fetch(`http://localhost:5000/produtos/${produtoId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nome, descricao, preco }),
+            const response = await api.put(`/produtos/${produtoId}`, {
+                nome: nome,
+                descricao: descricao,
+                preco: preco
             });
-            const produtoAtualizado = await response.json();
+            const produtoAtualizado = await response.data;
 
             setProdutos((prevProdutos) =>
                 prevProdutos.map((produto) =>
@@ -92,18 +81,14 @@ function FormTwo() {
     }
 
 
-    
+
 
     const deletarProduto = async (id: number) => {
         const confirmar = window.confirm('Tem certeza que deseja excluir este produto?');
         if (!confirmar) return;
 
         try {
-            await fetch(`http://localhost:5000/produtos/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            await api.delete(`/produtos/${id}`, {
             });
             setProdutos((prevProdutos) =>
                 prevProdutos.filter((produto) => produto.id !== id)
