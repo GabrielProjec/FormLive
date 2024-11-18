@@ -22,11 +22,11 @@ function FormFour() {
     const {
         register,
         handleSubmit,
-        reset,
+    
         formState: { errors },
     } = useForm<Produto>()
     const [produtos, setProdutos] = useState<Produto[]>([]);
-    const [formValues , setFormValue] = useState<Produto>({
+    const [formValues, setFormValues] = useState<Produto>({
         id: 0,
         nome: '',
         descricao: '',
@@ -58,7 +58,11 @@ function FormFour() {
                 data
             );
             setProdutos((prevProdutos) => [...prevProdutos, response.data]);
-            reset()
+            setFormValues({
+                nome: "",
+                descricao: "",
+                preco: ""
+            })
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -78,15 +82,19 @@ function FormFour() {
             const response = await api.put(`/produtos/${produtoId}`,
                 data
             );
-            const produtoAtualizado =  response.data;
+            const produtoAtualizado = response.data;
 
             setProdutos((prevProdutos) =>
                 prevProdutos.map((produto) =>
                     produto.id === produtoId ? produtoAtualizado : produto
                 )
             );
-            reset()
             setProdutoId(null);
+            setFormValues({
+                nome: "",
+                descricao: "",
+                preco: ""
+            })
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -100,7 +108,12 @@ function FormFour() {
     };
 
     const editarProduto = (produto: Produto) => {
-        reset(produto)
+        setFormValues({
+            id: produto.id,
+            nome: produto.nome || "",
+            descricao: produto.descricao || "",
+            preco: produto.preco.toString() || ""
+        })
         setProdutoId(produto.id || null);
     }
 
@@ -191,7 +204,13 @@ function FormFour() {
                                     <td>{produto.preco}</td>
                                     <td>
                                         <button onClick={() => editarProduto(produto)}>Editar</button>
-                                        <button onClick={() => deletarProduto(produto.id )}>Excluir</button>
+                                        <button onClick={() => {
+                                            if (produto.id !== undefined) {
+                                                deletarProduto(produto.id);
+                                            } else {
+                                                console.error("O ID do produto está indefinido.");
+                                            }
+                                        }}>Excluir</button>
                                     </td>
                                 </tr>
                             ))
