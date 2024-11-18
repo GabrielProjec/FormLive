@@ -20,6 +20,7 @@ function FormTwo() {
         listaProdutos();
     }, []);
 
+       {/* LISTA PRODUTOS */}
     const listaProdutos = async () => {
         try {
             const response = await api.get('/produtos', {
@@ -30,6 +31,7 @@ function FormTwo() {
         }
     };
 
+       {/* ADICIONA PRODUTO */}
     const adicionarProduto = async (event: any) => {
         event.preventDefault();
         if (!nome || !descricao || !preco) {
@@ -49,6 +51,7 @@ function FormTwo() {
         }
     };
 
+       {/* ATUALIZAR PRODUTO */}
     const atualizarProduto = async (event: any) => {
         event.preventDefault();
         try {
@@ -80,9 +83,7 @@ function FormTwo() {
         setProdutoId(produto.id);
     }
 
-
-
-
+    {/* DELETAR PRODUTO */}
     const deletarProduto = async (id: number) => {
         const confirmar = window.confirm('Tem certeza que deseja excluir este produto?');
         if (!confirmar) return;

@@ -19,10 +19,10 @@
       "preco": 14.5
     },
     {
-      "id": "afee",
       "nome": "Refresco",
       "descricao": "Suco de Laranja",
-      "preco": "5"
+      "preco": "10",
+      "id": "afee"
     }
   ]
 }
