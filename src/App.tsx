@@ -1,9 +1,9 @@
-import FormTwo from "./components/FormTwo"
+import FormThree from "./components/FormThree"
 
 function App() {
   return (
     <>
-      <FormTwo />
+      <FormThree />
     </>
   )
 }

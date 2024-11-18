@@ -19,6 +19,7 @@ function FormOne() {
         listaProdutos();
     }, []);
 
+    {/* LISTA PRODUTOS */}
     const listaProdutos = async () => {
         try {
             const response = await fetch('http://localhost:5000/produtos', {
@@ -33,7 +34,8 @@ function FormOne() {
             console.log('Erro ao buscar os dados', error);
         }
     };
-
+    
+     {/* ADICIONA PRODUTO */}
     const adicionarProduto = async (event: any) => {
         event.preventDefault();
         if (!nome || !descricao || !preco) {
@@ -58,6 +60,7 @@ function FormOne() {
         }
     };
 
+    {/* ATUALIZAR PRODUTO */}
     const atualizarProduto = async (event: any) => {
         event.preventDefault();
         try {
@@ -91,9 +94,7 @@ function FormOne() {
         setProdutoId(produto.id);
     }
 
-
-    
-
+    {/* DELETAR PRODUTO */}
     const deletarProduto = async (id: number) => {
         const confirmar = window.confirm('Tem certeza que deseja excluir este produto?');
         if (!confirmar) return;
@@ -112,6 +113,8 @@ function FormOne() {
             console.log('Erro ao excluir o produto', error);
         }
     };
+
+   
 
     return (
         <div className='container'>
