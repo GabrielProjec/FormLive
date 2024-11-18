@@ -36,6 +36,11 @@
     color: white;
     border-radius: 25px;
     border: none;
+    margin-top: 15px;
+}
+
+.error-message {
+    color: red;
 }
 
 /* TABELA */

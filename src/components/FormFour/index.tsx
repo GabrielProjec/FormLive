@@ -1,21 +1,37 @@
 import { useState, useEffect } from 'react';
-import api from '../../config/api';
+import { useForm } from 'react-hook-form'
 import './styles.css'
-import Swal from 'sweetalert2';
+
+// CONFIG
+import api from '../../config/api';
+
+// COMPONENT
 import Loading from '../Loading/Loading';
 
+// ALERTS
+import Swal from 'sweetalert2';
+
 interface Produto {
-    id: number;
+    id?: number;
     nome: string;
     descricao: string;
     preco: string;
 }
 
 function FormFour() {
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<Produto>()
     const [produtos, setProdutos] = useState<Produto[]>([]);
-    const [nome, setNome] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [preco, setPreco] = useState('');
+    const [formValues , setFormValue] = useState<Produto>({
+        id: 0,
+        nome: '',
+        descricao: '',
+        preco: ''
+    })
     const [produtoId, setProdutoId] = useState<number | null>(null);
     const [loading, setLoading] = useState(true)
 
@@ -36,20 +52,13 @@ function FormFour() {
     };
 
     {/* ADICIONA PRODUTO */ }
-    const adicionarProduto = async (event: any) => {
-        event.preventDefault();
-        if (!nome || !descricao || !preco) {
-            alert('Todos os campos são obrigatórios!');
-            return;
-        }
+    const adicionarProduto = async (data: Produto) => {
         try {
-            const response = await api.post('/produtos/', {
-                nome, descricao, preco
-            });
+            const response = await api.post('/produtos/',
+                data
+            );
             setProdutos((prevProdutos) => [...prevProdutos, response.data]);
-            setNome('');
-            setDescricao('');
-            setPreco('');
+            reset()
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -63,24 +72,20 @@ function FormFour() {
     };
 
     {/* ATUALIZAR PRODUTO */ }
-    const atualizarProduto = async (event: any) => {
-        event.preventDefault();
+    const atualizarProduto = async (data: Produto) => {
+
         try {
-            const response = await api.put(`/produtos/${produtoId}`, {
-                nome: nome,
-                descricao: descricao,
-                preco: preco
-            });
-            const produtoAtualizado = await response.data;
+            const response = await api.put(`/produtos/${produtoId}`,
+                data
+            );
+            const produtoAtualizado =  response.data;
 
             setProdutos((prevProdutos) =>
                 prevProdutos.map((produto) =>
                     produto.id === produtoId ? produtoAtualizado : produto
                 )
             );
-            setNome('');
-            setDescricao('');
-            setPreco('');
+            reset()
             setProdutoId(null);
             Swal.fire({
                 position: "center",
@@ -95,10 +100,8 @@ function FormFour() {
     };
 
     const editarProduto = (produto: Produto) => {
-        setNome(produto.nome);
-        setDescricao(produto.descricao);
-        setPreco(produto.preco);
-        setProdutoId(produto.id);
+        reset(produto)
+        setProdutoId(produto.id || null);
     }
 
     {/* DELETAR PRODUTO */ }
@@ -130,16 +133,38 @@ function FormFour() {
     return (
         <div className='container'>
             <h1>FormFour</h1>
-            <form className='form_container' onSubmit={produtoId ? atualizarProduto : adicionarProduto}>
-                <label className='text'>Nome</label>
-                <input className='input_text' value={nome} onChange={(e) => setNome(e.target.value)} />
+            <form className="form_container" onSubmit={handleSubmit(produtoId ? atualizarProduto : adicionarProduto)}>
+                <label className="text">Nome</label>
+                <input
+                    className={`input_text`}
+                    {...register("nome", { required: "nome-é-obrigatório" })}
+                    defaultValue={formValues.nome}
+                />
+                {errors.nome && <span className="error-message">{errors.nome.message}</span>}
 
-                <label className='text'>Descrição</label>
-                <input className='input_text' value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+                <label className="text">Descrição</label>
+                <input
+                    className={`input_text`}
+                    {...register("descricao", { required: "descrição-é-obrigatória" })}
+                    defaultValue={formValues.descricao}
+                />
+                {errors.descricao && (
+                    <span className="error-message">{errors.descricao.message}</span>
+                )}
 
-                <label className='text'>Preço</label>
-                <input className='input_text' value={preco} onChange={(e) => setPreco(e.target.value)} />
-                <button type="submit">{produtoId ? 'Atualizar Produto' : 'Cadastrar Produto'}</button>
+                <label className="text">Preço</label>
+                <input
+                    className={`input_text`}
+                    {...register("preco", {
+                        required: "preço-é-obrigatório",
+                    })}
+                    defaultValue={formValues.preco}
+                />
+                {errors.preco && <span className="error-message">{errors.preco.message}</span>}
+
+                <button type="submit">
+                    {produtoId ? "Atualizar Produto" : "Cadastrar Produto"}
+                </button>
             </form>
             <table className='tableContainer'>
                 <thead>
@@ -166,7 +191,7 @@ function FormFour() {
                                     <td>{produto.preco}</td>
                                     <td>
                                         <button onClick={() => editarProduto(produto)}>Editar</button>
-                                        <button onClick={() => deletarProduto(produto.id)}>Excluir</button>
+                                        <button onClick={() => deletarProduto(produto.id )}>Excluir</button>
                                     </td>
                                 </tr>
                             ))
