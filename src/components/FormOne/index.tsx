@@ -1,84 +1,81 @@
-import { useState, useEffect } from 'react'
-import './style.css'
+import { useState, useEffect } from 'react';
+import './style.css';
+
+interface Produto {
+    id: number;
+    nome: string;
+    descricao: string;
+    preco: string;
+}
 
 function FormOne() {
-
-    const [produtos, setProdutos] = useState([])
-    const [nome , setNome] = useState('')
-    const [descricao , setDescricao] = useState('')
-    const [preco , setPreco] = useState('')
-    const [produtoId, setProdutoId] = useState(null)
+    const [produtos, setProdutos] = useState<Produto[]>([]);
+    const [nome, setNome] = useState('');
+    const [descricao, setDescricao] = useState('');
+    const [preco, setPreco] = useState('');
+    const [produtoId, setProdutoId] = useState<number | null>(null);
 
     useEffect(() => {
-        listaProdutos()
-    }, [])
+        listaProdutos();
+    }, []);
 
-    // GETPRODUTOS
     const listaProdutos = async () => {
         try {
             const response = await fetch('http://localhost:5000/produtos', {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            const data = await response.json()
-            setProdutos(data)
-           
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            setProdutos(data);
         } catch (error) {
-            console.log("erro ao buscar os dados", error)
+            console.log('Erro ao buscar os dados', error);
         }
-    }
+    };
 
-    //ADICIONAR PRODUTOS 
     const adicionarProduto = async (event: any) => {
-        event.preventDefault()
+        event.preventDefault();
+        if (!nome || !descricao || !preco) {
+            alert('Todos os campos são obrigatórios!');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5000/produtos/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    nome: nome,
-                    descricao: descricao,
-                    preco: preco
-                })
-            })
-            const data = await response.json()
-            console.log(data)
-            setProdutos(data);
-          
+                body: JSON.stringify({ nome, descricao, preco }),
+            });
+            const novoProduto = await response.json();
+            setProdutos((prevProdutos) => [...prevProdutos, novoProduto]);
+            setNome('');
+            setDescricao('');
+            setPreco('');
         } catch (error) {
-            console.log("erro ao adicionar os dados", error)
+            console.log('Erro ao adicionar os dados', error);
         }
-    }
+    };
 
     const atualizarProduto = async (event: any) => {
         event.preventDefault();
-
         try {
             const response = await fetch(`http://localhost:5000/produtos/${produtoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    nome: nome,
-                    descricao: descricao,
-                    preco: preco,
-                }),
+                body: JSON.stringify({ nome, descricao, preco }),
             });
-            const data = await response.json();
+            const produtoAtualizado = await response.json();
 
-            // Atualizar a lista localmente
             setProdutos((prevProdutos) =>
                 prevProdutos.map((produto) =>
-                    produto.id === produtoId ? data : produto
+                    produto.id === produtoId ? produtoAtualizado : produto
                 )
             );
-
-            // Limpar formulário
             setNome('');
             setDescricao('');
             setPreco('');
@@ -88,18 +85,17 @@ function FormOne() {
         }
     };
 
-
-     // EDITAR PRODUTO
-     const editarProduto = (produto: any) => {
+    const editarProduto = (produto: Produto) => {
         setNome(produto.nome);
         setDescricao(produto.descricao);
         setPreco(produto.preco);
         setProdutoId(produto.id);
     };
 
+    const deletarProduto = async (id: number) => {
+        const confirmar = window.confirm('Tem certeza que deseja excluir este produto?');
+        if (!confirmar) return;
 
-      // DELETAR PRODUTO
-      const deletarProduto = async (id: number) => {
         try {
             await fetch(`http://localhost:5000/produtos/${id}`, {
                 method: 'DELETE',
@@ -107,7 +103,6 @@ function FormOne() {
                     'Content-Type': 'application/json',
                 },
             });
-
             setProdutos((prevProdutos) =>
                 prevProdutos.filter((produto) => produto.id !== id)
             );
@@ -117,10 +112,10 @@ function FormOne() {
     };
 
     return (
-        <div className='container' >
+        <div className='container'>
             <h1>FormOne</h1>
-            <form className='form_container' onSubmit={adicionarProduto} >
-                <label className='text' >Nome</label>
+            <form className='form_container' onSubmit={produtoId ? atualizarProduto : adicionarProduto}>
+                <label className='text'>Nome</label>
                 <input className='input_text' value={nome} onChange={(e) => setNome(e.target.value)} />
 
                 <label className='text'>Descrição</label>
@@ -128,9 +123,9 @@ function FormOne() {
 
                 <label className='text'>Preço</label>
                 <input className='input_text' value={preco} onChange={(e) => setPreco(e.target.value)} />
-                <button>{produtoId ? 'Atualizar Produto' : 'Cadastrar Produto'}</button>
+                <button type="submit">{produtoId ? 'Atualizar Produto' : 'Cadastrar Produto'}</button>
             </form>
-            <table>
+            <table className='tableContainer'>
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -139,27 +134,22 @@ function FormOne() {
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className='bodyItems'>
                     {produtos.map((produto) => (
                         <tr key={produto.id}>
-                        <td>{produto.nome}</td>
-                        <td>{produto.descricao}</td>
-                        <td>{produto.preco}</td>
-                        <td>
-                            <button onClick={() => editarProduto(produto)} >
-                                Editar
-                            </button>
-                            <button onClick={() => deletarProduto(produto.id)}
-                            >
-                                Excluir
-                            </button>
-                        </td>
-                    </tr>
+                            <td>{produto.nome}</td>
+                            <td>{produto.descricao}</td>
+                            <td>{produto.preco}</td>
+                            <td>
+                                <button onClick={() => editarProduto(produto)}>Editar</button>
+                                <button onClick={() => deletarProduto(produto.id)}>Excluir</button>
+                            </td>
+                        </tr>
                     ))}
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
 
 export default FormOne;
