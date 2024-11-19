@@ -35,7 +35,7 @@ function FormFive() {
     const listaProdutos = async () => {
         try {
             const data = await getProdutos();
-            setProdutos(data);
+            setProdutos(data)
             setLoading(false)
         } catch (error) {
             console.error("Erro ao buscar os dados", error);
