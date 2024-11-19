@@ -2,12 +2,6 @@
   "produtos": [
     {
       "nome": "Refresco",
-      "descricao": "Coca Cola ",
-      "preco": "15",
-      "id": "dea1"
-    },
-    {
-      "nome": "Refresco",
       "descricao": "Coca Cola 2lts",
       "preco": "15",
       "id": "0f26"
@@ -15,8 +9,26 @@
     {
       "nome": "Comida",
       "descricao": "X-Burguer",
-      "preco": "20",
+      "preco": "25",
       "id": "41ce"
+    },
+    {
+      "id": "c8a3",
+      "nome": "Comida",
+      "descricao": "X-Bacon",
+      "preco": "25"
+    },
+    {
+      "id": "b663",
+      "nome": "Comida",
+      "descricao": "X-Frango",
+      "preco": "25"
+    },
+    {
+      "id": "cbe7",
+      "nome": "Comida",
+      "descricao": "X-Cheese",
+      "preco": "25"
     }
   ]
 }
