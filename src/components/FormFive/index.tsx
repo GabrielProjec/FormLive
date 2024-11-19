@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form'
-import {z} from 'zod'
-import {zodResolver} from '@hookform/resolvers/zod'
-import './styles.css'
 
-// CONFIG
-import api from '../../config/api';
+import {zodResolver} from '@hookform/resolvers/zod'
+import {Produto, produtoSchema} from '../../service/Produtos/types'
+import {addProduto, attProduto, deleteProduto, getProdutos} from '../../service/Produtos/Produtos'
+import './styles.css'
 
 // COMPONENT
 import Loading from '../Loading/Loading';
@@ -13,15 +12,7 @@ import Loading from '../Loading/Loading';
 // ALERTS
 import Swal from 'sweetalert2';
 
-// Definição do esquema de validação com Zod
-const produtoSchema = z.object({
-    id: z.number().optional(),
-    nome: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
-    descricao: z.string().min(5, 'A descrição deve ter pelo menos 5 caracteres'),
-    preco: z.string().regex(/^\d+(\.\d{1,2})?$/, 'O preço deve ser um número válido'),
-});
 
-type Produto = z.infer<typeof produtoSchema>;
 
 function FormFive() {
     const {
@@ -43,22 +34,19 @@ function FormFive() {
     {/* LISTA PRODUTOS */ }
     const listaProdutos = async () => {
         try {
-            const response = await api.get('/produtos', {
-            });
-            setProdutos(response.data);
-            setLoading(false);
+            const data = await getProdutos();
+            setProdutos(data);
+            setLoading(false)
         } catch (error) {
-            console.log('Erro ao buscar os dados', error);
-        }
+            console.error("Erro ao buscar os dados", error);
     };
+}
 
     {/* ADICIONA PRODUTO */ }
     const adicionarProduto = async (data: Produto) => {
         try {
-            const response = await api.post('/produtos/',
-                data
-            );
-            setProdutos((prevProdutos) => [...prevProdutos, response.data]);
+            const response = await addProduto(data);
+            setProdutos((prevProdutos) => [...prevProdutos, response]);
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -83,7 +71,7 @@ function FormFive() {
 
         try {
             // Envia a atualização para a API
-            const response = await api.put(`/produtos/${produtoId}`, data);
+            const response = await attProduto(produtoId, data);
             const produtoAtualizado = response.data;
 
             // Atualiza o estado local de produtos
@@ -149,11 +137,11 @@ function FormFive() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await api.delete(`/produtos/${id}`);
-                    Swal.fire("Deletado!", "O Produto foi deletada.", "success");
+                    await deleteProduto(id);
                     setProdutos((prevProdutos) =>
                         prevProdutos.filter((produto) => produto.id !== id)
-                    );
+                );
+                Swal.fire("Deletado!", "O Produto foi deletada.", "success");
                 } catch (error) {
                     console.log('Erro ao excluir o produto', error);
                 }
