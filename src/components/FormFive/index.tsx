@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form'
-import { currencyFormat } from '../../helpers/currencyFormat';
 import {zodResolver} from '@hookform/resolvers/zod'
+import './styles.css'
+
+// SERVICES
 import {Produto, produtoSchema} from '../../service/Produtos/types'
 import {addProduto, attProduto, deleteProduto, getProdutos} from '../../service/Produtos/Produtos'
-import './styles.css'
+
+// HELPERS
+import { currencyFormat } from '../../helpers/currencyFormat';
 
 // COMPONENT
 import Loading from '../Loading/Loading';
@@ -67,21 +71,12 @@ function FormFive() {
 
     {/* ATUALIZAR PRODUTO */ }
     const atualizarProduto = async (data: Produto) => {
-        if (!produtoId) return; // Verifica se o produtoId está definido
-
+        if (!produtoId) return; 
         try {
-            // Envia a atualização para a API
-            const response = await attProduto(produtoId, data);
-            const produtoAtualizado = response.data;
-            console.log(response.data)
-
-            // Atualiza o estado local de produtos
+            const produtoAtualizado = await attProduto(produtoId, data);
             setProdutos((prevProdutos) =>
                 prevProdutos.map((produto) =>
-                    produto.id === produtoId ? produtoAtualizado : produto
-                )
-            );
-            // Limpa o ID do produto sendo editado
+                    produto.id === produtoId ? produtoAtualizado : produto));
             setProdutoId(null);
             reset({
                 nome: "",
@@ -97,15 +92,6 @@ function FormFive() {
             });
         } catch (error) {
             console.error('Erro ao atualizar os dados', error);
-
-            // Exibe mensagem de erro
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Erro ao atualizar o produto",
-                text: "Verifique os dados e tente novamente.",
-                showConfirmButton: true,
-            });
         }
     };
 
@@ -113,9 +99,9 @@ function FormFive() {
         console.log(produto)
         // Atualiza os valores no formulário
         reset({
-            nome: produto.nome ,
-            descricao: produto.descricao ,
-            preco: produto.preco ,
+            nome: produto.nome || "" ,
+            descricao: produto.descricao || "" ,
+            preco: produto.preco || "",
         });
         setProdutoId(produto.id || null);
     }

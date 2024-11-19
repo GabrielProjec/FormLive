@@ -80,30 +80,18 @@ function FormFour() {
     {/* ATUALIZAR PRODUTO */ }
     const atualizarProduto = async (data: Produto) => {
         if (!produtoId) return; // Verifica se o produtoId está definido
-
         try {
-            // Envia a atualização para a API
             const response = await api.put(`/produtos/${produtoId}`, data);
             const produtoAtualizado = response.data;
-
-            // Atualiza o estado local de produtos
             setProdutos((prevProdutos) =>
                 prevProdutos.map((produto) =>
-                    produto.id === produtoId ? produtoAtualizado : produto
-                )
-            );
-
-            // Limpa o ID do produto sendo editado
+                    produto.id === produtoId ? produtoAtualizado : produto));
             setProdutoId(null);
-
-            // Limpa o formulário
             reset({
                 nome: "",
                 descricao: "",
                 preco: "",
             });
-
-            // Exibe mensagem de sucesso
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -113,15 +101,6 @@ function FormFour() {
             });
         } catch (error) {
             console.error('Erro ao atualizar os dados', error);
-
-            // Exibe mensagem de erro (opcional)
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Erro ao atualizar o produto",
-                text: "Verifique os dados e tente novamente.",
-                showConfirmButton: true,
-            });
         }
     };
 
