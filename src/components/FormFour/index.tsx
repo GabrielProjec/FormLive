@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form'
+import {z} from 'zod'
+import {zodResolver} from '@hookform/resolvers/zod'
 import './styles.css'
 
 // CONFIG
@@ -11,12 +13,15 @@ import Loading from '../Loading/Loading';
 // ALERTS
 import Swal from 'sweetalert2';
 
-interface Produto {
-    id?: number;
-    nome: string;
-    descricao: string;
-    preco: string;
-}
+// Definição do esquema de validação com Zod
+const produtoSchema = z.object({
+    id: z.number().optional(),
+    nome: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
+    descricao: z.string().min(5, 'A descrição deve ter pelo menos 5 caracteres'),
+    preco: z.string().regex(/^\d+(\.\d{1,2})?$/, 'O preço deve ser um número válido'),
+});
+
+type Produto = z.infer<typeof produtoSchema>;
 
 function FormFour() {
     const {
@@ -24,14 +29,10 @@ function FormFour() {
         handleSubmit,
         reset,
         formState: { errors },
-    } = useForm<Produto>()
-    const [produtos, setProdutos] = useState<Produto[]>([]);
-    const [formValues, setFormValues] = useState<Produto>({
-        id: 0,
-        nome: '',
-        descricao: '',
-        preco: ''
+    } = useForm<Produto>({
+        resolver: zodResolver(produtoSchema),
     })
+    const [produtos, setProdutos] = useState<Produto[]>([]);
     const [produtoId, setProdutoId] = useState<number | null>(null);
     const [loading, setLoading] = useState(true)
 
@@ -167,14 +168,14 @@ function FormFour() {
                 <label className="text">Nome</label>
                 <input
                     className={`input_text`}
-                    {...register("nome", { required: "nome-é-obrigatório" })}
+                    {...register("nome")}
                 />
                 {errors.nome && <span className="error-message">{errors.nome.message}</span>}
 
                 <label className="text">Descrição</label>
                 <input
                     className={`input_text`}
-                    {...register("descricao", { required: "descrição-é-obrigatória" })}
+                    {...register("descricao")}
                 />
                 {errors.descricao && (
                     <span className="error-message">{errors.descricao.message}</span>
@@ -183,9 +184,7 @@ function FormFour() {
                 <label className="text">Preço</label>
                 <input
                     className={`input_text`}
-                    {...register("preco", {
-                        required: "preço-é-obrigatório",
-                    })}
+                    {...register("preco")}
                 />
                 {errors.preco && <span className="error-message">{errors.preco.message}</span>}
 
