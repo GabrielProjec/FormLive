@@ -73,6 +73,7 @@ function FormFive() {
             // Envia a atualização para a API
             const response = await attProduto(produtoId, data);
             const produtoAtualizado = response.data;
+            console.log(response.data)
 
             // Atualiza o estado local de produtos
             setProdutos((prevProdutos) =>
@@ -114,11 +115,12 @@ function FormFive() {
     };
 
     const editarProduto = (produto: Produto) => {
+        console.log(produto)
         // Atualiza os valores no formulário
         reset({
-            nome: produto.nome || "",
-            descricao: produto.descricao || "",
-            preco: produto.preco || "",
+            nome: produto.nome ,
+            descricao: produto.descricao ,
+            preco: produto.preco ,
         });
         setProdutoId(produto.id || null);
     }
@@ -199,7 +201,7 @@ function FormFive() {
                     ) :
                         produtos.length > 0 ? (
                             produtos.map((produto) => (
-                                <tr key={produto.id}>
+                                <tr key={produto.id} >
                                     <td>{produto.nome}</td>
                                     <td>{produto.descricao}</td>
                                     <td>{produto.preco}</td>

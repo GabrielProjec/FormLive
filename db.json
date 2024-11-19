@@ -3,7 +3,7 @@
     {
       "nome": "Refresco",
       "descricao": "Coca Cola 2lts",
-      "preco": "15",
+      "preco": "20",
       "id": "0f26"
     },
     {
@@ -23,6 +23,12 @@
       "descricao": "X-Tudo",
       "preco": "30",
       "id": "b663"
+    },
+    {
+      "nome": "Refresco",
+      "descricao": "Suco de Laranja",
+      "preco": "10",
+      "id": "e1af"
     }
   ]
 }
