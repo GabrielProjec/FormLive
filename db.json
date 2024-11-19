@@ -23,12 +23,6 @@
       "nome": "Comida",
       "descricao": "X-Frango",
       "preco": "25"
-    },
-    {
-      "id": "cbe7",
-      "nome": "Comida",
-      "descricao": "X-Cheese",
-      "preco": "25"
     }
   ]
 }
