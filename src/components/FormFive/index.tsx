@@ -81,18 +81,13 @@ function FormFive() {
                     produto.id === produtoId ? produtoAtualizado : produto
                 )
             );
-
             // Limpa o ID do produto sendo editado
             setProdutoId(null);
-
-            // Limpa o formulário
             reset({
                 nome: "",
                 descricao: "",
                 preco: "",
             });
-
-            // Exibe mensagem de sucesso
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -103,7 +98,7 @@ function FormFive() {
         } catch (error) {
             console.error('Erro ao atualizar os dados', error);
 
-            // Exibe mensagem de erro (opcional)
+            // Exibe mensagem de erro
             Swal.fire({
                 position: "center",
                 icon: "error",
