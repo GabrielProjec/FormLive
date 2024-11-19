@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form'
-
+import { currencyFormat } from '../../helpers/currencyFormat';
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Produto, produtoSchema} from '../../service/Produtos/types'
 import {addProduto, attProduto, deleteProduto, getProdutos} from '../../service/Produtos/Produtos'
@@ -199,7 +199,7 @@ function FormFive() {
                                 <tr key={produto.id} >
                                     <td>{produto.nome}</td>
                                     <td>{produto.descricao}</td>
-                                    <td>{produto.preco}</td>
+                                    <td>{currencyFormat(Number(produto.preco))}</td>
                                     <td>
                                         <button onClick={() => editarProduto(produto)}>Editar</button>
                                         <button onClick={() => {

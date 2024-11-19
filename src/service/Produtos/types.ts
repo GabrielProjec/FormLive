@@ -1,16 +1,14 @@
 import { z } from "zod";
 
-// Definição do esquema de validação com Zod
 export const produtoSchema = z.object({
-    id: z.number().optional(), // O ID é opcional porque pode não estar presente em novos produtos
-    nome: z.string().min(3, { message: "O nome deve ter pelo menos 3 caracteres" }),
+    id: z.number().optional(),
+    nome: z.string().min(3, { message: "o-nome-deve-ter-no-minimo-3-digitos" }),
     descricao: z
         .string()
-        .min(5, { message: "A descrição deve ter pelo menos 5 caracteres" }),
+        .min(5, { message: "a-descrição-deve-ter-no-minimo-5-digitos" }),
     preco: z
         .string()
-        .regex(/^\d+(\.\d{1,2})?$/, { message: "O preço deve ser um número válido" }),
+        .regex(/^\d+(\.\d{1,2})?$/, { message: "o-preço-deve-ser-valido" }),
 });
 
-// Define o tipo Produto inferido a partir do esquema
 export type Produto = z.infer<typeof produtoSchema>;
