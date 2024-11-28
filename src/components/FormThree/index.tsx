@@ -4,6 +4,9 @@ import './styles.css'
 import Swal from 'sweetalert2';
 import Loading from '../Loading/Loading';
 
+// HELPERS
+import { currencyFormat } from '../../helpers/currencyFormat';
+
 interface Produto {
     id: number;
     nome: string;
@@ -163,7 +166,7 @@ function FormThree() {
                                 <tr key={produto.id}>
                                     <td>{produto.nome}</td>
                                     <td>{produto.descricao}</td>
-                                    <td>{produto.preco}</td>
+                                    <td>{currencyFormat(Number(produto.preco))}</td>
                                     <td>
                                         <button onClick={() => editarProduto(produto)}>Editar</button>
                                         <button onClick={() => deletarProduto(produto.id)}>Excluir</button>

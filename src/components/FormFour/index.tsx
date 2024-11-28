@@ -12,6 +12,7 @@ import Loading from '../Loading/Loading';
 
 // ALERTS
 import Swal from 'sweetalert2';
+import { currencyFormat } from '../../helpers/currencyFormat';
 
 // Definição do esquema de validação com Zod
 const produtoSchema = z.object({
@@ -193,7 +194,7 @@ function FormFour() {
                                 <tr key={produto.id}>
                                     <td>{produto.nome}</td>
                                     <td>{produto.descricao}</td>
-                                    <td>{produto.preco}</td>
+                                    <td>{currencyFormat(Number(produto.preco))}</td>
                                     <td>
                                         <button onClick={() => editarProduto(produto)}>Editar</button>
                                         <button onClick={() => {
